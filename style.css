@@ -142,7 +142,14 @@ main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding
 .quiz-head { margin-bottom: 14px; }
 .progress { height: 14px; background: #fff; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 2px var(--line); }
 .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--mint), #7ee0bf); border-radius: 999px; transition: width .4s ease; }
-.quiz-meta { display: flex; justify-content: space-between; margin-top: 6px; font-size: 1rem; color: var(--ink-soft); }
+.quiz-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 1rem; color: var(--ink-soft); }
+.q-counter {
+  background: #fff; border: 3px solid var(--mint); border-radius: 999px;
+  padding: 4px 16px; font-size: 1.15rem; color: var(--ink);
+}
+.q-counter b { color: var(--mint-dark); font-size: 1.6rem; font-weight: normal; margin: 0 2px; }
+.q-total { color: var(--ink-soft); }
+.session-stars { background: var(--sun-soft); border: 3px solid var(--sun); border-radius: 999px; padding: 4px 14px; font-size: 1.15rem; color: var(--ink); }
 .timer { position: relative; height: 26px; margin-top: 8px; background: #fff; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 2px var(--line); }
 .timer-fill { height: 100%; width: 100%; background: var(--sun); transition: width .2s linear, background .3s; }
 .timer-fill.hurry { background: var(--coral); }

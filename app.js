@@ -181,7 +181,7 @@
     const item = current();
     const total = quiz.list.length;
     quiz.answered = false;
-    $("qCounter").textContent = `${quiz.pos + 1} / ${total}`;
+    $("qCounter").innerHTML = `第 <b>${quiz.pos + 1}</b> 題<span class="q-total">／共 ${total} 題</span>`;
     $("progressFill").style.width = `${(quiz.pos / total) * 100}%`;
     $("sessionStars").textContent = quiz.stars;
 
