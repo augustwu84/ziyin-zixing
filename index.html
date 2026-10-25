@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>字音字形小學堂</title>
+  <meta name="description" content="國小語文競賽字音字形練習：拼注音、選字形、計時挑戰、錯題本。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐣</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Serif+TC:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-deco" aria-hidden="true">
+    <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+  </div>
+
+  <header class="topbar">
+    <button class="icon-btn" id="homeBtn" aria-label="回首頁" hidden>🏠</button>
+    <div class="brand">字音字形小學堂</div>
+    <div class="top-right">
+      <span class="star-pill" title="累積星星">⭐ <b id="totalStars">0</b></span>
+      <button class="icon-btn" id="soundBtn" aria-label="音效開關">🔊</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- 首頁 -->
+    <section class="screen" id="screen-home">
+      <div class="hero">
+        <div class="mascot" id="mascotHome"></div>
+        <div class="bubble">嗨！我是小音 🐣<br>今天一起來挑戰字音字形吧！</div>
+      </div>
+
+      <div class="mode-cards">
+        <button class="mode-card yin" data-type="yin">
+          <span class="mode-emoji">🗣️</span>
+          <span class="mode-title">字音練習</span>
+          <span class="mode-desc">看詞語，拼出正確的注音</span>
+        </button>
+        <button class="mode-card xing" data-type="xing">
+          <span class="mode-emoji">✏️</span>
+          <span class="mode-title">字形練習</span>
+          <span class="mode-desc">看注音，選出正確的國字</span>
+        </button>
+      </div>
+
+      <button class="wide-btn mistakes-btn" id="openMistakes">
+        📒 錯題本 <span class="count-badge" id="mistakeCount">0</span>
+      </button>
+    </section>
+
+    <!-- 設定 -->
+    <section class="screen" id="screen-setup" hidden>
+      <h2 class="screen-title" id="setupTitle">字音練習</h2>
+
+      <div class="setup-block">
+        <div class="setup-label">選擇題本</div>
+        <div class="chip-row" id="roundChips"></div>
+      </div>
+
+      <div class="setup-block">
+        <div class="setup-label">題目數量</div>
+        <div class="chip-row" id="countChips">
+          <button class="chip" data-count="10">10 題</button>
+          <button class="chip" data-count="20">20 題</button>
+          <button class="chip" data-count="all">全部（依序）</button>
+        </div>
+      </div>
+
+      <div class="setup-block">
+        <div class="setup-label">模式</div>
+        <div class="play-modes">
+          <button class="play-mode" data-mode="practice">
+            <span class="pm-emoji">🌱</span>
+            <span class="pm-title">慢慢練習</span>
+            <span class="pm-desc">不計時，想清楚再作答</span>
+          </button>
+          <button class="play-mode" data-mode="timed">
+            <span class="pm-emoji">⏱️</span>
+            <span class="pm-title">計時挑戰</span>
+            <span class="pm-desc" id="timedDesc">每題有時間限制，答得快多一顆星</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 作答 -->
+    <section class="screen" id="screen-quiz" hidden>
+      <div class="quiz-head">
+        <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="quiz-meta">
+          <span id="qCounter">1 / 10</span>
+          <span class="session-stars">⭐ <b id="sessionStars">0</b></span>
+        </div>
+        <div class="timer" id="timerWrap" hidden>
+          <div class="timer-fill" id="timerFill"></div>
+          <span class="timer-text" id="timerText"></span>
+        </div>
+      </div>
+
+      <div class="q-card" id="qCard">
+        <div class="q-prompt" id="qPrompt"></div>
+        <div class="q-word" id="qWord"></div>
+      </div>
+
+      <!-- 字音：注音鍵盤 -->
+      <div class="yin-input" id="yinInput" hidden>
+        <div class="answer-slot" id="answerSlot" aria-live="polite"></div>
+        <div class="kb" id="keyboard"></div>
+        <div class="kb-actions">
+          <button class="kb-act clear" id="kbClear">🧽 清除</button>
+          <button class="kb-act back" id="kbBack">⌫ 退一格</button>
+          <button class="kb-act submit" id="kbSubmit">送出 ✔</button>
+        </div>
+      </div>
+
+      <!-- 字形：四選一 -->
+      <div class="choices" id="choices" hidden></div>
+    </section>
+
+    <!-- 結果 -->
+    <section class="screen" id="screen-result" hidden>
+      <div class="result-card">
+        <div class="mascot big" id="mascotResult"></div>
+        <h2 id="resultTitle">太棒了！</h2>
+        <div class="result-stars" id="resultStars"></div>
+        <div class="result-score" id="resultScore"></div>
+        <div class="result-earned" id="resultEarned"></div>
+      </div>
+      <div class="review" id="reviewList"></div>
+      <div class="result-actions">
+        <button class="wide-btn" id="againBtn">🔁 再玩一次</button>
+        <button class="wide-btn ghost" id="backHomeBtn">🏠 回首頁</button>
+      </div>
+    </section>
+
+    <!-- 錯題本 -->
+    <section class="screen" id="screen-mistakes" hidden>
+      <h2 class="screen-title">📒 錯題本</h2>
+      <p class="hint">答錯的題目會自動收進來，在錯題本裡答對一次就會畢業離開喔！</p>
+      <div id="mistakeGroups"></div>
+    </section>
+  </main>
+
+  <!-- 作答回饋 -->
+  <div class="feedback" id="feedback" hidden>
+    <div class="fb-card" id="fbCard">
+      <div class="fb-icon" id="fbIcon"></div>
+      <div class="fb-title" id="fbTitle"></div>
+      <div class="fb-word" id="fbWord"></div>
+      <div class="fb-detail" id="fbDetail"></div>
+      <div class="fb-actions">
+        <button class="kb-act speak" id="speakBtn">🔊 念念看</button>
+        <button class="kb-act submit" id="nextBtn">下一題 ➜</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
