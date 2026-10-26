@@ -18,7 +18,8 @@
   // ---------- 儲存 ----------
   const store = loadStore();
   function loadStore() {
-    const fallback = { stars: 0, mistakes: {}, sound: true };
+    // completed：完成幾回練習｜bank：每個題本練過的題（done）與答對過的題（right）
+    const fallback = { stars: 0, mistakes: {}, sound: true, completed: 0, bank: {} };
     try {
       const raw = localStorage.getItem(STORE_KEY);
       return raw ? Object.assign(fallback, JSON.parse(raw)) : fallback;
@@ -127,6 +128,65 @@
   function renderHome() {
     $("totalStars").textContent = store.stars;
     $("mistakeCount").textContent = Object.values(store.mistakes).reduce((n, a) => n + a.length, 0);
+    renderBank();
+    renderDogs();
+  }
+
+  // ---------- 題庫進度 ----------
+  function bankOf(roundId) {
+    return store.bank[roundId] || (store.bank[roundId] = { done: [], right: [] });
+  }
+  function recordBank(roundId, idx, ok) {
+    const b = bankOf(roundId);
+    if (!b.done.includes(idx)) b.done.push(idx);
+    if (ok && !b.right.includes(idx)) b.right.push(idx);
+    saveStore();
+  }
+  function renderBank() {
+    $("bankProgress").innerHTML = ROUNDS.map((r) => {
+      const b = store.bank[r.id] || { done: [], right: [] };
+      const total = r.items.length;
+      const pct = Math.round((b.done.length / total) * 100);
+      return `<div class="bank-row">
+        <div class="bank-head"><span>${r.type === "yin" ? "🗣️" : "✏️"} ${r.title}</span>
+          <span class="bank-num">已練 <b>${b.done.length}</b>／${total} 題・答對過 ${b.right.length} 題</span></div>
+        <div class="bank-bar"><div class="bank-fill ${r.type}" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join("");
+  }
+
+  // ---------- 耳耳收集冊 ----------
+  const ROUNDS_PER_DOG = 10;
+  const unlockedCount = () => Math.min(DOGS.length, Math.floor(store.completed / ROUNDS_PER_DOG));
+  function renderDogs() {
+    const n = unlockedCount();
+    $("dogCount").textContent = `${n}／${DOGS.length}`;
+    if (n >= DOGS.length) {
+      $("dogNext").textContent = "🎊 全部收集完成，你是字音字形大師！";
+    } else {
+      const left = ROUNDS_PER_DOG - (store.completed % ROUNDS_PER_DOG);
+      const pct = ((store.completed % ROUNDS_PER_DOG) / ROUNDS_PER_DOG) * 100;
+      $("dogNext").innerHTML = `再完成 <b>${left}</b> 回練習，就能解鎖第 ${n + 1} 隻耳耳！
+        <div class="bank-bar"><div class="bank-fill dog" style="width:${pct}%"></div></div>`;
+    }
+    $("dogGrid").innerHTML = DOGS.map((d, k) => {
+      const open = k < n;
+      return `<button class="dog-cell${open ? "" : " locked"}" data-dog="${k}" ${open ? "" : "disabled"} aria-label="${open ? d.name : "還沒解鎖"}">
+        ${renderDog(d)}<span class="dog-label">${open ? d.name : `第 ${k + 1} 隻`}</span>
+        ${open ? "" : `<span class="dog-lock">🔒</span>`}
+      </button>`;
+    }).join("");
+  }
+  function showDog(k, isNew) {
+    const d = DOGS[k];
+    $("dogModalTag").textContent = isNew ? `🎉 解鎖第 ${k + 1} 隻耳耳！` : `第 ${k + 1} 隻耳耳`;
+    $("dogModalArt").innerHTML = renderDog(d);
+    $("dogModalName").textContent = d.name;
+    $("dogModalMsg").textContent = isNew
+      ? `你已經完成 ${store.completed} 回練習了，耳耳說：你好棒，繼續加油！`
+      : "耳耳最喜歡認真練習的你！";
+    $("dogModal").hidden = false;
+    if (isNew) { sfx.fanfare(); burstConfetti(200); }
   }
 
   // ---------- 設定 ----------
@@ -322,6 +382,7 @@
     const isYin = quiz.round.type === "yin";
     const accepted = isYin ? [item.a, ...(item.alt || [])] : [item.a];
     const ok = val !== null && accepted.includes(val);
+    recordBank(quiz.round.id, quiz.list[quiz.pos], ok);
 
     let earned = 0;
     if (ok) {
@@ -391,9 +452,28 @@
     const total = quiz.list.length;
     const ratio = quiz.correct / total;
     const rank = ratio >= 0.9 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
+    const dogsBefore = unlockedCount();
     store.stars += quiz.stars;
+    store.completed += 1;
     saveStore();
     $("totalStars").textContent = store.stars;
+
+    if (window.cloud) {
+      window.cloud.saveSession({
+        ts: Date.now(),
+        roundId: quiz.round.id,
+        roundTitle: quiz.round.title,
+        type: quiz.round.type,
+        mode: quiz.fromMistakes ? "mistakes" : quiz.timed ? "timed" : "practice",
+        total,
+        correct: quiz.correct,
+        stars: quiz.stars,
+        completed: store.completed,
+        wrongs: quiz.wrongs.map(({ item, given }) => ({
+          w: item.w, i: item.i, a: item.a, z: item.z || null, given,
+        })),
+      });
+    }
 
     $("resultTitle").textContent = ["再加油一下！", "不錯喔！", "好厲害！", "滿分大師！"][rank];
     $("resultStars").innerHTML = [0, 1, 2].map((k) => `<span class="${k < rank ? "" : "dim"}">⭐</span>`).join("");
@@ -418,6 +498,7 @@
     show("result");
     mascotMood($("mascotResult"), rank >= 2 ? "happy" : rank === 0 ? "sad" : null);
     if (rank >= 2) { sfx.fanfare(); burstConfetti(160); }
+    if (unlockedCount() > dogsBefore) setTimeout(() => showDog(unlockedCount() - 1, true), 900);
   }
 
   // ---------- 錯題本 ----------
@@ -546,6 +627,14 @@
       show("home");
     });
     $("openMistakes").addEventListener("click", openMistakes);
+    $("dogGrid").addEventListener("click", (e) => {
+      const b = e.target.closest(".dog-cell");
+      if (b && !b.disabled) { sfx.tap(); showDog(Number(b.dataset.dog), false); }
+    });
+    $("dogModalClose").addEventListener("click", () => {
+      $("dogModal").hidden = true;
+      if (!$("screen-home").hidden) renderDogs();
+    });
     $("mistakeGroups").addEventListener("click", (e) => {
       const b = e.target.closest(".m-practice");
       if (!b) return;

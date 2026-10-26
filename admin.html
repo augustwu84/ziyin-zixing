@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>家長後台</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Serif+TC:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin">
+  <header class="topbar">
+    <a class="icon-btn" href="index.html" aria-label="回練習首頁" style="display:grid;place-items:center;text-decoration:none">🏠</a>
+    <div class="brand">家長後台</div>
+    <div class="top-right">
+      <button class="chip small" id="logoutBtn" hidden>登出</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 尚未設定 Firebase -->
+    <section class="panel" id="noConfig" hidden>
+      <h3 class="panel-title">☁️ 雲端還沒設定</h3>
+      <p class="admin-p">後台需要連到 Firebase 才能看到練習紀錄。請先依照說明建立 Firebase 專案，把設定貼進 <code>firebase-config.js</code>。</p>
+      <p class="admin-p">在設定好之前，小朋友的練習紀錄會先存在練習的那台裝置上，設定完成後會自動補傳。</p>
+    </section>
+
+    <!-- 登入 -->
+    <section class="panel login-panel" id="loginPanel" hidden>
+      <h3 class="panel-title">🔐 登入</h3>
+      <form id="loginForm" class="admin-form">
+        <label>帳號<input id="loginUser" autocomplete="username" required></label>
+        <label>密碼<input id="loginPass" type="password" autocomplete="current-password" required></label>
+        <div class="form-msg" id="loginMsg"></div>
+        <button class="wide-btn" type="submit">登入</button>
+      </form>
+    </section>
+
+    <!-- 後台內容 -->
+    <section id="dash" hidden>
+      <div class="stat-grid" id="stats"></div>
+
+      <div class="panel">
+        <h3 class="panel-title">😵 常錯的題目 <span class="panel-sub">最近 200 回</span></h3>
+        <div id="topWrong"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">📝 練習紀錄 <span class="panel-sub" id="sessCount"></span></h3>
+        <div id="sessions"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">🔑 修改密碼</h3>
+        <form id="pwForm" class="admin-form">
+          <label>目前密碼<input id="pwOld" type="password" autocomplete="current-password" required></label>
+          <label>新密碼（至少 6 個字）<input id="pwNew" type="password" autocomplete="new-password" minlength="6" required></label>
+          <label>再輸入一次新密碼<input id="pwNew2" type="password" autocomplete="new-password" minlength="6" required></label>
+          <div class="form-msg" id="pwMsg"></div>
+          <button class="wide-btn" type="submit">更新密碼</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="firebase-config.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

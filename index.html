@@ -49,6 +49,19 @@
       <button class="wide-btn mistakes-btn" id="openMistakes">
         📒 錯題本 <span class="count-badge" id="mistakeCount">0</span>
       </button>
+
+      <div class="panel">
+        <h3 class="panel-title">📚 題庫進度</h3>
+        <div id="bankProgress"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">🐶 耳耳收集冊 <span class="panel-sub" id="dogCount"></span></h3>
+        <div class="dog-next" id="dogNext"></div>
+        <div class="dog-grid" id="dogGrid"></div>
+      </div>
+
+      <a class="admin-link" href="admin.html">家長後台</a>
     </section>
 
     <!-- 設定 -->
@@ -158,9 +171,23 @@
     </div>
   </div>
 
+  <!-- 耳耳鼓勵畫面 -->
+  <div class="dog-modal" id="dogModal" hidden>
+    <div class="dog-modal-card">
+      <div class="dog-modal-tag" id="dogModalTag"></div>
+      <div class="dog-modal-art" id="dogModalArt"></div>
+      <div class="dog-modal-name" id="dogModalName"></div>
+      <div class="dog-modal-msg" id="dogModalMsg"></div>
+      <button class="wide-btn" id="dogModalClose">好開心！</button>
+    </div>
+  </div>
+
   <canvas id="confetti" aria-hidden="true"></canvas>
 
   <script src="data.js"></script>
+  <script src="dogs.js"></script>
+  <script src="firebase-config.js"></script>
+  <script type="module" src="cloud.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 後台帳號（Firebase Authentication 裡的 admin 信箱）
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'admin@ziyin-zixing.app';
+    }
+
+    // 練習紀錄：練習的裝置（匿名登入）只能新增，只有後台能讀取和刪除
+    match /sessions/{id} {
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['ts', 'roundId', 'total', 'correct', 'wrongs'])
+        && request.resource.data.total is int
+        && request.resource.data.wrongs is list
+        && request.resource.data.wrongs.size() <= 200;
+      allow read, delete: if isAdmin();
+    }
+  }
+}
