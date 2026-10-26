@@ -27,7 +27,7 @@ async function start() {
     $("loginPanel").hidden = ok;
     $("dash").hidden = !ok;
     $("logoutBtn").hidden = !ok;
-    if (ok) loadSessions();
+    if (ok) { loadSessions(); loadReviews(); }
   });
 
   $("loginForm").addEventListener("submit", async (e) => {
@@ -69,6 +69,18 @@ async function start() {
         ? "目前密碼不正確" : "更新失敗，請稍後再試";
     }
   });
+
+  async function loadReviews() {
+    try {
+      const snap = await F.getDocs(F.collection(db, "reviews"));
+      const docs = {};
+      snap.forEach((d) => (docs[d.id] = d.data()));
+      renderReviews(docs);
+    } catch (err) {
+      console.error(err);
+      $("reviews").innerHTML = `<div class="empty">讀取失敗</div>`;
+    }
+  }
 
   async function loadSessions() {
     $("sessions").innerHTML = `<div class="empty">讀取中…</div>`;
@@ -132,6 +144,24 @@ function render(list) {
         </details>`;
       }).join("")
     : `<div class="empty">還沒有練習紀錄</div>`;
+}
+
+const DECISION_LABEL = {
+  keep: "用網站的寫法", paper: "改回原卷", other: "另外寫", ok: "網站內容正確", wrong: "不正確",
+  both: "兩種都算對", new: "只算新版讀音",
+};
+function renderReviews(docs) {
+  const items = REVIEW_ITEMS.map((it) => ({ it, r: docs[it.key] })).filter((x) => x.r && x.r.decision);
+  const extras = Object.values(docs).filter((d) => d.extra);
+  $("rvCount").textContent = `已確認 ${items.length}／${REVIEW_ITEMS.length} 題`;
+  const label = (it, d) => (it.kind === "alt" && d === "paper" ? "只算卷上答案" : DECISION_LABEL[d] || d);
+  let html = items.length
+    ? items.map(({ it, r }) => `<div class="review-item"><span class="rw">${hl(it)}</span>
+        <span class="ra">${esc(it.round)} 第 ${it.no} 題<br><b>${esc(label(it, r.decision))}</b>${r.answer ? `：${esc(r.answer)}` : ""}</span></div>`).join("")
+    : `<div class="empty">老師還沒填寫</div>`;
+  if (extras.length) html += `<div class="review-title">老師另外發現的錯誤</div>` + extras.map((x) => `<div class="review-item"><span>${esc(x.round)} 第 ${x.no} 題：${esc(x.problem)}</span><span class="ra">${x.correct ? `<b>${esc(x.correct)}</b>` : ""}</span></div>`).join("");
+  if (docs._note && docs._note.note) html += `<div class="review-title">老師留言</div><div class="review-item"><span>${esc(docs._note.note)}</span></div>`;
+  $("reviews").innerHTML = `<div class="sess-wrongs">${html}</div>`;
 }
 
 function hl(w) {

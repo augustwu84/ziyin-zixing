@@ -54,6 +54,12 @@
       </div>
 
       <div class="panel">
+        <h3 class="panel-title">📝 老師確認結果 <span class="panel-sub" id="rvCount"></span></h3>
+        <p class="admin-p">確認單網址：<a href="teacher.html" target="_blank" rel="noopener">teacher.html</a>（老師不用登入）</p>
+        <div id="reviews"></div>
+      </div>
+
+      <div class="panel">
         <h3 class="panel-title">🔑 修改密碼</h3>
         <form id="pwForm" class="admin-form">
           <label>目前密碼<input id="pwOld" type="password" autocomplete="current-password" required></label>
@@ -67,6 +73,7 @@
   </main>
 
   <script src="firebase-config.js"></script>
+  <script src="review-items.js"></script>
   <script type="module" src="admin.js"></script>
 </body>
 </html>

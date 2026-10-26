@@ -15,5 +15,18 @@ service cloud.firestore {
         && request.resource.data.wrongs.size() <= 200;
       allow read, delete: if isAdmin();
     }
+
+    // 老師確認單：打開確認單的人（匿名登入）可以讀寫，欄位與長度有限制
+    match /reviews/{id} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && id.size() <= 40
+        && request.resource.data.keys().hasOnly(['decision', 'answer', 'note', 'ts', 'extra', 'round', 'no', 'problem', 'correct'])
+        && (!('answer' in request.resource.data) || request.resource.data.answer.size() <= 300)
+        && (!('note' in request.resource.data) || request.resource.data.note.size() <= 2000)
+        && (!('problem' in request.resource.data) || request.resource.data.problem.size() <= 500)
+        && (!('correct' in request.resource.data) || request.resource.data.correct.size() <= 300);
+      allow delete: if request.auth != null && id.matches('extra-.*');
+    }
   }
 }

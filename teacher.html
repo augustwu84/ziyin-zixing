@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>題目確認單</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Serif+TC:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .rv main { max-width: 820px; }
+    .rv-intro { background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); margin-top: 8px; line-height: 1.8; }
+    .rv-intro h1 { margin: 0 0 6px; font-weight: normal; font-size: 1.6rem; }
+    .rv-intro p { margin: 0 0 6px; color: var(--ink-soft); }
+    .rv-status { position: sticky; top: 62px; z-index: 5; display: flex; align-items: center; gap: 12px; margin: 14px 0; padding: 10px 14px;
+      background: #fff; border-radius: 16px; box-shadow: var(--shadow); }
+    .rv-status .bank-bar { flex: 1; }
+    .rv-count { white-space: nowrap; font-size: 1rem; }
+    .rv-count b { color: var(--mint-dark); font-size: 1.3rem; font-weight: normal; }
+    .rv-save { font-size: .9rem; color: var(--ink-soft); white-space: nowrap; min-width: 4.5em; text-align: right; }
+    .rv-save.ok { color: var(--mint-dark); }
+    .rv-save.err { color: var(--coral-dark); }
+    .rv-section { margin-top: 24px; }
+    .rv-section h2 { font-weight: normal; font-size: 1.3rem; margin: 0 0 4px; }
+    .rv-section > p { margin: 0 0 12px; color: var(--ink-soft); line-height: 1.7; }
+    .rv-item { background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 3px 0 var(--line); margin-bottom: 12px; border-left: 6px solid var(--line); }
+    .rv-item.done { border-left-color: var(--mint); }
+    .rv-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+    .rv-ref { color: var(--ink-soft); font-size: .95rem; }
+    .rv-word { font-family: var(--font-char); font-size: 1.7rem; }
+    .rv-word .hl { color: var(--coral-dark); }
+    .rv-ans { color: var(--sky-dark); font-size: 1.05rem; }
+    .rv-cmp { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 10px 0; font-size: 1rem; }
+    .rv-cmp dt { color: var(--ink-soft); }
+    .rv-cmp dd { margin: 0; }
+    .rv-why { color: var(--ink-soft); font-size: .95rem; margin: 0 0 10px; line-height: 1.6; }
+    .rv-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rv-opt { position: relative; }
+    .rv-opt input { position: absolute; opacity: 0; pointer-events: none; }
+    .rv-opt span { display: inline-block; padding: 8px 14px; border-radius: 999px; border: 3px solid var(--line); background: var(--bg); cursor: pointer; font-size: 1rem; }
+    .rv-opt input:checked + span { border-color: var(--mint); background: #e6f8f1; }
+    .rv-opt input:focus-visible + span { outline: 3px solid var(--sky); outline-offset: 2px; }
+    .rv-text { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .rv-text input, .rv-text textarea, .rv-extra input, .rv-extra select, .rv-extra textarea {
+      font: inherit; font-size: 1rem; padding: 9px 12px; border-radius: 12px; border: 3px solid var(--line); background: #fffdf9; color: var(--ink); width: 100%; }
+    .rv-text textarea, .rv-extra textarea { min-height: 2.6em; resize: vertical; }
+    .rv-extra-form { background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 3px 0 var(--line); display: grid; grid-template-columns: 1fr 110px; gap: 10px; }
+    .rv-extra-form .full { grid-column: 1 / -1; }
+    .rv-extra-form label { display: flex; flex-direction: column; gap: 4px; color: var(--ink-soft); font-size: .95rem; }
+    .rv-extra-list { margin-top: 12px; display: grid; gap: 8px; }
+    .rv-extra-row { background: #fff; border-radius: 14px; padding: 10px 14px; box-shadow: 0 3px 0 var(--line); display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; }
+    .rv-extra-row small { color: var(--ink-soft); }
+    .rv-del { color: var(--coral-dark); font-size: .9rem; padding: 4px 8px; }
+    .rv-finish { margin: 26px 0 40px; background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+    .rv-finish label { display: flex; flex-direction: column; gap: 6px; color: var(--ink-soft); }
+    .rv-offline { background: #ffe3e6; color: var(--coral-dark); padding: 12px 14px; border-radius: 14px; margin-top: 12px; }
+    @media (max-width: 520px) { .rv-extra-form { grid-template-columns: 1fr; } .rv-status { top: 58px; } }
+  </style>
+</head>
+<body class="rv">
+  <header class="topbar">
+    <div class="brand">字音字形小學堂・題目確認單</div>
+  </header>
+
+  <main>
+    <section class="rv-intro">
+      <h1>老師您好，麻煩幫忙確認這些題目</h1>
+      <p>這是孩子練習用的「字音字形小學堂」網站。題目是從語文競賽國小組字音字形試題的答案卷轉寫來的，下面 37 題是轉寫時跟卷面有出入，或看不清楚的地方。</p>
+      <p>每題點選一個選項就好，<b>會自動儲存</b>，不用按送出；中途關掉，下次打開還會在。如果發現其他題目有錯，也可以寫在最下面。謝謝老師！</p>
+      <div class="rv-offline" id="offline" hidden>目前無法連線儲存，請檢查網路後重新整理頁面。</div>
+    </section>
+
+    <div class="rv-status">
+      <span class="rv-count">已確認 <b id="doneCount">0</b>／<span id="totalCount">37</span> 題</span>
+      <div class="bank-bar"><div class="bank-fill dog" id="doneBar" style="width:0%"></div></div>
+      <span class="rv-save" id="saveState"></span>
+    </div>
+
+    <section class="rv-section">
+      <h2>一、題目文字被修改過的</h2>
+      <p>這幾題卷面的文字看起來不通順或看不清楚，網站照語意改過。請選擇要用哪一種。</p>
+      <div id="list-text"></div>
+    </section>
+
+    <section class="rv-section">
+      <h2>二、看不清楚、可能轉寫錯的</h2>
+      <p>掃描檔不夠清楚，請確認網站目前的內容是否正確。</p>
+      <div id="list-unsure"></div>
+    </section>
+
+    <section class="rv-section">
+      <h2>三、字音題：要不要也接受新版讀音</h2>
+      <p>這些題目卷上的答案是舊讀音，跟教育部新版審訂音不同。網站目前<b>兩種讀音都算對</b>。請選擇練習時要算哪一種對。</p>
+      <div id="list-alt"></div>
+    </section>
+
+    <section class="rv-section">
+      <h2>四、其他發現有錯的題目</h2>
+      <p>如果練習時或看卷時發現其他錯誤，請填在這裡，按「加入」就會儲存。</p>
+      <form class="rv-extra-form rv-extra" id="extraForm">
+        <label>題本
+          <select id="exRound" required></select>
+        </label>
+        <label>題號
+          <input id="exNo" type="number" min="1" max="100" inputmode="numeric" required>
+        </label>
+        <label class="full">哪裡有錯
+          <textarea id="exProblem" required placeholder="例如：注音應該是二聲"></textarea>
+        </label>
+        <label class="full">正確應該是（選填）
+          <input id="exCorrect" placeholder="例如：ㄏㄜˊ">
+        </label>
+        <button class="wide-btn full" type="submit" style="margin-top:0">加入</button>
+      </form>
+      <div class="rv-extra-list" id="extraList"></div>
+    </section>
+
+    <section class="rv-finish">
+      <label>老師的稱呼或其他想說的話（選填）
+        <textarea id="teacherNote" class="rv-text" style="font:inherit;font-size:1rem;padding:9px 12px;border-radius:12px;border:3px solid var(--line);background:#fffdf9;min-height:3em"></textarea>
+      </label>
+    </section>
+  </main>
+
+  <script src="firebase-config.js"></script>
+  <script src="review-items.js"></script>
+  <script type="module" src="teacher.js"></script>
+</body>
+</html>
