@@ -20,7 +20,7 @@ async function start() {
   const app = initializeApp(cfg);
   const auth = A.getAuth(app);
   const db = F.getFirestore(app);
-  const isAdmin = (u) => u && u.email === window.ADMIN_EMAIL;
+  const isAdmin = (u) => u && u.uid === window.ADMIN_UID;
 
   A.onAuthStateChanged(auth, (user) => {
     const ok = isAdmin(user);
@@ -35,10 +35,13 @@ async function start() {
     const user = $("loginUser").value.trim();
     const pass = $("loginPass").value;
     $("loginMsg").textContent = "";
-    if (user !== "admin") { $("loginMsg").textContent = "帳號或密碼不正確"; return; }
     try {
-      await A.signInWithEmailAndPassword(auth, window.ADMIN_EMAIL, pass);
+      const cred = await A.signInWithEmailAndPassword(auth, user, pass);
       $("loginPass").value = "";
+      if (!isAdmin(cred.user)) {
+        await A.signOut(auth);
+        $("loginMsg").textContent = "這個帳號沒有後台權限";
+      }
     } catch (err) {
       $("loginMsg").textContent = err.code === "auth/too-many-requests" ? "嘗試太多次，請稍後再試" : "帳號或密碼不正確";
     }
@@ -55,7 +58,7 @@ async function start() {
     if (newPw !== $("pwNew2").value) { msg.textContent = "兩次輸入的新密碼不一樣"; return; }
     if (newPw.length < 6) { msg.textContent = "新密碼至少要 6 個字"; return; }
     try {
-      const cred = A.EmailAuthProvider.credential(window.ADMIN_EMAIL, oldPw);
+      const cred = A.EmailAuthProvider.credential(auth.currentUser.email, oldPw);
       await A.reauthenticateWithCredential(auth.currentUser, cred);
       await A.updatePassword(auth.currentUser, newPw);
       e.target.reset();

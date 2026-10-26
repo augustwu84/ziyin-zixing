@@ -19,9 +19,12 @@
 家長後台的練習紀錄存在 Firebase Firestore：
 
 1. 把 Firebase 網頁應用程式的 `firebaseConfig` 貼進 `firebase-config.js`
-2. Authentication 開啟「匿名」與「電子郵件／密碼」登入，並新增使用者 `admin@ziyin-zixing.app`
-3. Authentication → 設定 → 已授權網域加入 `augustwu84.github.io`
-4. Firestore 規則貼上 `firestore.rules` 的內容
+2. Authentication 開啟「匿名」與「電子郵件／密碼」登入，並新增後台使用者
+3. 把後台使用者的 UID 填進 `firebase-config.js` 的 `ADMIN_UID` 和 `firestore.rules`
+4. Authentication → 設定 → 已授權網域加入 `augustwu84.github.io`
+5. Firestore 規則貼上 `firestore.rules` 的內容
+
+後台登入時，帳號欄輸入後台使用者的電子郵件。
 
 還沒設定好之前，練習紀錄會先存在練習的裝置上，設定完成後自動補傳。
 
