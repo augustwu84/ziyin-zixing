@@ -17,7 +17,10 @@ let removeDoc = null;
 
 function renderItems() {
   for (const kind of ["text", "unsure", "alt"]) {
-    $(`list-${kind}`).innerHTML = REVIEW_ITEMS.filter((it) => it.kind === kind).map((it) => {
+    const items = REVIEW_ITEMS.filter((it) => it.kind === kind);
+    // 已經確認完、從清單拿掉的區塊就整段隱藏
+    $(`list-${kind}`).closest(".rv-section").hidden = items.length === 0;
+    $(`list-${kind}`).innerHTML = items.map((it) => {
       const ch = [...it.w][it.i];
       const cmp = kind === "alt"
         ? `<dt>卷上答案</dt><dd>「${esc(ch)}」唸 <b>${esc(it.paper)}</b></dd><dt>新版讀音</dt><dd>${esc(it.alt)}</dd>`
@@ -40,6 +43,7 @@ function renderItems() {
     }).join("");
   }
   $("totalCount").textContent = REVIEW_ITEMS.length;
+  $("introCount").textContent = REVIEW_ITEMS.length;
   $("exRound").innerHTML = ROUND_NAMES.map((n) => `<option>${n}</option>`).join("");
 }
 
