@@ -305,9 +305,10 @@ main { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding
 .dog-cell:not(.locked):active { transform: scale(.94); }
 .dog-cell svg { width: 100%; height: auto; display: block; }
 .dog-label { font-size: .72rem; line-height: 1.2; text-align: center; }
-.dog-cell.locked { background: #e9e4df; cursor: default; }
-.dog-cell.locked svg { filter: grayscale(1) brightness(.9) contrast(.6); opacity: .45; }
-.dog-cell.locked .dog-label { color: #a39890; }
+/* 未解鎖：像「猜猜我是誰」一樣只剩實心灰色剪影，看不到任何細節 */
+.dog-cell.locked { background: linear-gradient(180deg, #d9e6f2, #c4d6e8); cursor: default; }
+.dog-cell.locked svg { filter: brightness(0) invert(.45); }
+.dog-cell.locked .dog-label { color: #6f7f90; font-weight: bold; }
 .dog-lock { position: absolute; top: 4px; right: 6px; font-size: .8rem; }
 .admin-link { display: block; text-align: center; margin-top: 26px; color: var(--ink-soft); font-size: .9rem; }
 

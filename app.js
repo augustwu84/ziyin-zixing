@@ -172,7 +172,7 @@
     $("dogGrid").innerHTML = DOGS.map((d, k) => {
       const open = k < n;
       return `<button class="dog-cell${open ? "" : " locked"}" data-dog="${k}" ${open ? "" : "disabled"} aria-label="${open ? d.name : "還沒解鎖"}">
-        ${renderDog(d)}<span class="dog-label">${open ? d.name : `第 ${k + 1} 隻`}</span>
+        ${renderDog(d)}<span class="dog-label">${open ? d.name : "？？？"}</span>
         ${open ? "" : `<span class="dog-lock">🔒</span>`}
       </button>`;
     }).join("");
