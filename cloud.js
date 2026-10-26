@@ -25,6 +25,8 @@ async function connect() {
   ]);
   const app = initializeApp(cfg);
   const auth = getAuth(app);
+  // 先等登入狀態從瀏覽器還原，避免每次開頁都多建一個匿名帳號、或把家長的後台登入蓋掉
+  await auth.authStateReady();
   if (!auth.currentUser) await signInAnonymously(auth);
   const db = getFirestore(app);
   return (rec) => addDoc(collection(db, "sessions"), rec);
