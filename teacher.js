@@ -7,7 +7,7 @@ const hl = (w, i) => [...w].map((c, k) => (k === i ? `<span class="hl">${esc(c)}
 const OPTIONS = {
   text: [["keep", "用網站的寫法"], ["paper", "改回原卷"], ["other", "都不對，另外寫"]],
   unsure: [["ok", "網站內容正確"], ["wrong", "不正確，另外寫"]],
-  alt: [["both", "兩種都算對"], ["paper", "只算卷上答案"], ["new", "只算新版讀音"]],
+  alt: [["both", "兩種都算對"], ["paper", "只算卷上答案"], ["new", "只算辭典讀音"]],
 };
 const NEEDS_TEXT = new Set(["other", "wrong"]);
 
@@ -23,7 +23,7 @@ function renderItems() {
     $(`list-${kind}`).innerHTML = items.map((it) => {
       const ch = [...it.w][it.i];
       const cmp = kind === "alt"
-        ? `<dt>卷上答案</dt><dd>「${esc(ch)}」唸 <b>${esc(it.paper)}</b></dd><dt>新版讀音</dt><dd>${esc(it.alt)}</dd>`
+        ? `<dt>卷上答案</dt><dd>「${esc(ch)}」唸 <b>${esc(it.paper)}</b></dd><dt>教育部辭典</dt><dd>${esc(it.alt)}</dd>`
         : `<dt>卷面</dt><dd>${esc(it.paper)}</dd><dt>網站目前</dt><dd>${esc(it.site)}</dd>`;
       return `<article class="rv-item" id="item-${it.key}" data-key="${it.key}">
         <div class="rv-head">

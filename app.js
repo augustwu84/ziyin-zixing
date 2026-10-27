@@ -423,7 +423,7 @@
     let detail = "";
     if (isYin) {
       detail = `「${esc(item.w[item.i])}」唸作 <b>${item.a}</b>`;
-      if (item.alt) detail += `<br><small>（新版審訂音 ${item.alt.join("、")} 也算對）</small>`;
+      if (item.alt) detail += `<br><small>（教育部辭典讀音 ${item.alt.join("、")} 也算對）</small>`;
       if (!ok && val) detail += `<br>你拼的是 ${esc(val)}`;
     } else {
       detail = `${item.z} 要寫 <b>${esc(item.a)}</b>`;

@@ -148,7 +148,7 @@ function render(list) {
 
 const DECISION_LABEL = {
   keep: "用網站的寫法", paper: "改回原卷", other: "另外寫", ok: "網站內容正確", wrong: "不正確",
-  both: "兩種都算對", new: "只算新版讀音",
+  both: "兩種都算對", new: "只算辭典讀音",
 };
 function renderReviews(docs) {
   const items = REVIEW_ITEMS.map((it) => ({ it, r: docs[it.key] })).filter((x) => x.r && x.r.decision);
